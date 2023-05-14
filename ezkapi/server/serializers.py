@@ -5,28 +5,14 @@ from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Student
+        model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'middle_name', 'email', 'password']
 
     def create(self, validated_data):
-        try:
-            gender = validated_data['gender']
-        except:
-            gender = None
 
-        user = Student.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            middle_name=validated_data['middle_name'],
-            gender=gender
-        )
 
-        user.set_password(validated_data['password'])
-        user.save()
 
-        return user
+        return validated_data
 
 
 class UpdateUserSerializer(serializers.ModelSerializer):
@@ -38,7 +24,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     date_of_birth = serializers.DateField(required=False)
 
     class Meta:
-        model = Student
+        model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'middle_name', 'email')
 
     def update(self, instance, validated_data):
@@ -77,3 +63,34 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class UrokSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Urok
+        fields = '__all__'
+
+
+class DisciplineSerializer(serializers.ModelSerializer):
+    urok = UrokSerializer()
+    class Meta:
+        model = Discipline
+        fields = ['id', 'urok']
+
+
+class DsuSerializer(serializers.ModelSerializer):
+    discipline = DisciplineSerializer()
+
+    class Meta:
+        model = DSU
+        fields = ['id', 'discipline', 'date', 'time']
+
+
+class ScheduleSerializer(serializers.Serializer):
+    dsus = serializers.SerializerMethodField('get_dsus')
+
+    def get_dsus(self, *args):
+        a = DsuSerializer(args, many=True)
+        print(a)
+        return a.data
+

@@ -12,7 +12,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
+        (None, {"fields": ("email", "password", 'first_name', 'last_name', 'middle_name', 'username')}),
         ("Permissions", {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
     )
     add_fieldsets = (
@@ -31,14 +31,13 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Student)
 admin.site.register(Discipline)
-admin.site.register(DisciplineCredits)
-admin.site.register(DesciplineShedule)
-admin.site.register(Schedule)
+admin.site.register(DSU)
+admin.site.register(Urok)
 admin.site.register(Direction)
 
 admin.site.register(Faculty)
 admin.site.register(Education)
-admin.site.register(UZ)
+admin.site.register(EduCategory)
 admin.site.register(Positions)
 admin.site.register(OtdelKadrovPPS)
 admin.site.register(OtdelKadrovUchashiesya)
