@@ -63,7 +63,7 @@ class Direction(models.Model):
         verbose_name_plural = _('Направлении')
 
 
-class Education(models.Model):
+class EduCategory(models.Model):
     title = models.CharField(max_length=123)
     def __str__(self):
         return self.title
@@ -72,9 +72,9 @@ class Education(models.Model):
         verbose_name_plural = _('Виды образовательного заведения')
 
 
-class UZ(models.Model):
+class Education(models.Model):
     title = models.CharField(max_length=255,default="")
-    uchrezhdenie = models.ForeignKey(Education, on_delete=models.CASCADE)
+    uchrezhdenie = models.ForeignKey(EduCategory, on_delete=models.CASCADE)
     description = models.TextField()
     faculties = models.ManyToManyField(Faculty)
     adress = models.CharField(max_length=255)
@@ -85,61 +85,6 @@ class UZ(models.Model):
     class Meta:
         verbose_name = _('Учебное заведение')
         verbose_name_plural = _('Учебные заведения')
-
-
-class Discipline(models.Model):
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
-    direction = models.ForeignKey(Direction, on_delete=models.CASCADE)
-    title = models.CharField(max_length=123)
-    description = models.TextField()
-    teachers = models.ManyToManyField("CustomUser")
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('Дисциплина')
-        verbose_name_plural = _('Дисциплины')
-
-
-class DisciplineCredits(models.Model):
-    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
-    credits = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = _('Кредитация дисциплины')
-        verbose_name_plural = _('Кредитаци дисциполны')
-
-
-class Schedule(models.Model):
-    years = models.CharField(max_length=12)
-    direction = models.ForeignKey(Direction, on_delete=models.CASCADE)
-    created_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Расписание {self.direction} {self.years}'
-
-    class Meta:
-        unique_together = ["direction", "years"]
-        verbose_name = _('Расписание')
-        verbose_name_plural = _('Расписании')
-
-
-class DesciplineShedule(models.Model):
-    discipline = models.ForeignKey(DisciplineCredits, on_delete=models.CASCADE)
-    shedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name='disciplinesh')
-    start_time = models.TimeField()
-    day = models.CharField(max_length=10)
-
-    def __str__(self):
-        return f'{self.discipline} {self.shedule}'
-
-    class Meta:
-        verbose_name = _('Расписание дисциплины')
-        verbose_name_plural = _('Расписании дисциплины')
 
 
 # USER MODELS###############################################################################
@@ -156,33 +101,9 @@ class Positions(models.Model):
         verbose_name_plural = _("Должности")
 
 
-# class UppperUser(models.Model):
-#     user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
-#
-#     class Meta:
-#         verbose_name = _("Верховный пользователь")
-#         verbose_name_plural = _("Верховные пользователи")
-#         abstract = True
-#
-#
-# class MiddleUser(models.Model):
-#     user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
-#
-#     class Meta:
-#         verbose_name = _("Средний пользователь")
-#         verbose_name_plural = _("Средние пользователи")
-#         abstract = True
-#
-#
-# class LowerUser(models.Model):
-#     user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
-#     class Meta:
-#         verbose_name = _("Нижний пользователь")
-#         verbose_name_plural = _("Нижние пользователи")
-
 
 class OtdelKadrovPPS(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE,blank=True,null=True,default="")
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_otdel_kadrov_pps = models.BooleanField(default=True)
 
     def __str__(self):
@@ -194,9 +115,7 @@ class OtdelKadrovPPS(models.Model):
 
 
 class OtdelKadrovUchashiesya(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
-    is_otdel_kadrov_studentov = models.BooleanField(default=True)
-
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     def __str__(self):
         return self.user.username
 
@@ -206,7 +125,7 @@ class OtdelKadrovUchashiesya(models.Model):
 
 
 class MezhdunarodnyiOtdel(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_mezhdunarodnyi_otdel = models.BooleanField(default=True)
 
     def __str__(self):
@@ -218,7 +137,7 @@ class MezhdunarodnyiOtdel(models.Model):
 
 
 class PriemnayaKomissiya(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_priemnaya_komisiya = models.BooleanField(default=True)
 
     def __str__(self):
@@ -230,7 +149,7 @@ class PriemnayaKomissiya(models.Model):
 
 
 class UchebnyiOtdel(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_uchebnyi_otdel = models.BooleanField(default=True)
 
     def __str__(self):
@@ -242,7 +161,7 @@ class UchebnyiOtdel(models.Model):
 
 
 class VtoroiOtdel(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_vtoroi_otdel = models.BooleanField(default=True)
 
     def __str__(self):
@@ -254,7 +173,7 @@ class VtoroiOtdel(models.Model):
 
 
 class Buhgalteriya(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_buhgalteriya = models.BooleanField(default=True)
 
     def __str__(self):
@@ -266,7 +185,7 @@ class Buhgalteriya(models.Model):
 
 
 class Dekanat(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_dekanat = models.BooleanField(default=True)
 
     def __str__(self):
@@ -278,7 +197,7 @@ class Dekanat(models.Model):
 
 
 class Prepodavatel(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_prepodavatel = models.BooleanField(default=True)
 
     def __str__(self):
@@ -290,7 +209,7 @@ class Prepodavatel(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     direction = models.ForeignKey(
         'Direction',
         on_delete=models.CASCADE,
@@ -308,7 +227,7 @@ class Student(models.Model):
 
 
 class Roditeli(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_roditel = models.BooleanField(default=True)
 
     def __str__(self):
@@ -320,7 +239,7 @@ class Roditeli(models.Model):
 
 
 class Kafedra(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_kafedra = models.BooleanField(default=True)
     def __str__(self):
         return self.user.username
@@ -332,7 +251,7 @@ class Kafedra(models.Model):
 
 
 class UMK(models.Model):
-    user = models.OneToOneRel(field_name=id, to=CustomUser, field=id)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     is_umk = models.BooleanField(default=True)
 
     def __str__(self):
@@ -341,3 +260,30 @@ class UMK(models.Model):
     class Meta:
         verbose_name = _("Представитель учебно методического комполекса")
         verbose_name_plural = _("Представитель учебно методического комполекса")
+
+
+class Urok(models.Model):
+    title = models.CharField(max_length=123)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class Discipline(models.Model):
+    direction = models.ForeignKey(Direction, on_delete=models.CASCADE)
+    flow = models.PositiveIntegerField()
+    urok = models.ForeignKey(Urok, on_delete=models.CASCADE)
+    credits = models.PositiveIntegerField()
+    user = models.ManyToManyField(CustomUser, related_name='users_disciplines')
+
+    def __str__(self):
+        return f'{self.direction.title} | {self.flow} | {self.urok.title} | {self.credits} |'
+
+
+class DSU(models.Model):
+    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE, related_name='dsus')
+    date = models.CharField(max_length=12)
+    time = models.TimeField()
+    def __str__(self):
+        return f'{self.discipline.direction.title} | {self.date}| {self.time}'
